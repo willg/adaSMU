@@ -20,9 +20,10 @@ package body dacControl is
    end dacInit;
 
    task body dacTask is
+      type upOrDown is (Up, Down);
       use type Word;
 
-      Period : constant Time_Span := Milliseconds (1000);  -- arbitrary
+      Period : constant Time_Span := Milliseconds (100);  -- arbitrary
 --      subtype counts is Integer range 0 .. 10;
 --      count : counts := 0;
 
@@ -47,6 +48,7 @@ package body dacControl is
       Value   : Word := 0;
       Percent : Word;
       K       : Word := 0;
+      upDown : upOrDown := Up;
 
       Resolution : constant DAC_Resolution := DAC_Resolution_12_Bits;
       --  Arbitrary, change as desired.  Counts will automatically adjust.
@@ -66,12 +68,22 @@ package body dacControl is
       Next_Release := Next_Release + Period;
       delay until Next_Release;
       loop
-         Toggle (Red);
+         Toggle (TestPoint);
 
-         Percent := K * 10;
-         K := K + 1;
 
-         Value := (Percent * Max_Counts) / 100;
+         if upDown = Up then
+            K := K + 1;
+            if K >= 88 then
+               upDown := Down;
+            end if;
+         else
+            K := K - 1;
+            if K = 12 then
+               upDown := Up;
+            end if;
+         end if;
+
+         Value := (K * Max_Counts) / 100;
 
          Set_Output
             (DAC_1,
