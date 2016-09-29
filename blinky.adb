@@ -89,22 +89,35 @@ procedure Blinky is
       Configure_IO (All_LEDs, Configuration);
    end Initialize_LEDs;
 
+   procedure Print (X, Y : Natural; Value : Word; Suffix : String := "");
+
+   procedure Print (X, Y : Natural; Value : Word; Suffix : String := "") is
+      Value_Image : constant String := Value'Img;
+   begin
+      LCD_Std_Out.Put (X, Y, Value_Image (2 .. Value_Image'Last) & Suffix & "   ");
+   end Print;
+
 begin
    Initialize_LEDs;
    STM32.Button.Initialize;
-   LCD_Std_Out.Put ("Hello, World!  ");
-   LCD_Std_Out.Put ("Press to count");
-   dacControl.dacInit;
+   dacInit;
+   LCD_Std_Out.Clear_Screen;
+--   LCD_Std_Out.Put ('a');
+   Print (0, 0, 3, "mV");
+--   LCD_Std_Out.Put ("Hello, World!  ");
+--   LCD_Std_Out.Put ("Press to count");
+--   dacControl.dacInit;
 
    Toggle (Red);
    Next_Release := Next_Release + Period;
-   setVoltage := voltage;
+--   dacSetOutput (voltage);
    delay until Next_Release;
    loop
+
       Toggle (Green);
       if STM32.Button.Has_Been_Pressed then
          voltage := voltage + 1.0;
-         setVoltage := voltage;
+         dacSetOutput (voltage);
 
          Toggle (Red);
          count := count + 1;

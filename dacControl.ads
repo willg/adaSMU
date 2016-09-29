@@ -1,5 +1,3 @@
-with Config; use Config;
-
 with HAL; use HAL;
 
 package dacControl is
@@ -10,16 +8,9 @@ package dacControl is
    --  todo set range on DacCode_t
    subtype DacCode_t is Word;
 
-   setVoltage : OutputVoltage_t := 0.0 with Atomic;
-
-
-   function DacCodeFromVoltage (setVoltage : OutputVoltage_t) return DacCode_t;
-
    procedure dacInit;
-
-   task dacTask is
-      pragma Priority (DAC_TASK_PRIORITY);
-   end dacTask;
+   procedure dacSetOutput (setPoint : OutputVoltage_t);
+   function DacCodeFromVoltage (setVoltage : OutputVoltage_t) return DacCode_t;
 
 
 end dacControl;
