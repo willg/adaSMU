@@ -1,6 +1,5 @@
 
 
-with HAL; use HAL;
 with STM32.Device;  use STM32.Device;
 with STM32.Board;   use STM32.Board;
 
@@ -10,6 +9,12 @@ with Ada.Real_Time; use Ada.Real_Time;
 with STM32.DAC;     use STM32.DAC;
 
 package body dacControl is
+   Resolution : constant DAC_Resolution := DAC_Resolution_12_Bits;
+   --  Arbitrary, change as desired.  Counts will automatically adjust.
+
+   Max_Counts : constant Word := (if Resolution = DAC_Resolution_12_Bits
+                                     then Max_12bit_Resolution
+                                     else Max_8bit_Resolution);
 
    procedure dacInit is
    begin
@@ -18,6 +23,17 @@ package body dacControl is
       end if;
       isInit := True;
    end dacInit;
+
+   function DacCodeFromVoltage (setVoltage : OutputVoltage_t) return DacCode_t is
+      DacVoltage : Float := 0.0;
+      DacPercent : Float := 0.0;
+
+   begin
+      DacVoltage := (setVoltage + 12.0) / 8.0;
+      DacPercent := DacVoltage / 3.0;
+      return Word (Float'Rounding (DacPercent * Float (Max_Counts)));
+   end DacCodeFromVoltage;
+
 
    task body dacTask is
       type upOrDown is (Up, Down);
@@ -44,18 +60,9 @@ package body dacControl is
          Configure_IO (Output, Config);
       end ConfigureDAC_GPIO;
 
-
       Value   : Word := 0;
-      Percent : Word;
       K       : Word := 0;
       upDown : upOrDown := Up;
-
-      Resolution : constant DAC_Resolution := DAC_Resolution_12_Bits;
-      --  Arbitrary, change as desired.  Counts will automatically adjust.
-
-      Max_Counts : constant Word := (if Resolution = DAC_Resolution_12_Bits
-                                     then Max_12bit_Resolution
-                                     else Max_8bit_Resolution);
 
    begin
       ConfigureDAC_GPIO (Output_Channel);
@@ -83,7 +90,7 @@ package body dacControl is
             end if;
          end if;
 
-         Value := (K * Max_Counts) / 100;
+         Value := DacCodeFromVoltage (2.0);
 
          Set_Output
             (DAC_1,
