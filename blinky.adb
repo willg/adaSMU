@@ -66,6 +66,7 @@ procedure Blinky is
    Period : constant Time_Span := Milliseconds (500);  -- arbitrary
    subtype counts is Integer range 0 .. 10;
    count : counts := 0;
+   voltage : OutputVoltage_t := 0.0;
 
    Next_Release : Time := Clock;
 
@@ -97,10 +98,14 @@ begin
 
    Toggle (Red);
    Next_Release := Next_Release + Period;
+   setVoltage := voltage;
    delay until Next_Release;
    loop
       Toggle (Green);
       if STM32.Button.Has_Been_Pressed then
+         voltage := voltage + 1.0;
+         setVoltage := voltage;
+
          Toggle (Red);
          count := count + 1;
          LCD_Std_Out.Clear_Screen;

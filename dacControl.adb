@@ -36,6 +36,7 @@ package body dacControl is
 
 
    task body dacTask is
+
       type upOrDown is (Up, Down);
       use type Word;
 
@@ -77,7 +78,6 @@ package body dacControl is
       loop
          Toggle (TestPoint);
 
-
          if upDown = Up then
             K := K + 1;
             if K >= 88 then
@@ -90,7 +90,7 @@ package body dacControl is
             end if;
          end if;
 
-         Value := DacCodeFromVoltage (2.0);
+         Value := DacCodeFromVoltage (setVoltage);
 
          Set_Output
             (DAC_1,
@@ -102,6 +102,7 @@ package body dacControl is
          Trigger_Conversion_By_Software (DAC_1, Output_Channel);
 
          Next_Release := Next_Release + Period;
+
          delay until Next_Release;
       end loop;
    end dacTask;
