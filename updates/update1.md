@@ -79,10 +79,7 @@ Our hardware architecture consists of the following functional blocks:
 3. Output voltage measurement
 4. Output current measurement
 
-
-Output stage
-------------
-
+### Output stage
 
 The function of the output stage is to generate the output voltages and
 currents required by our SMU.  To this end it must be able to generate both
@@ -102,8 +99,7 @@ resistors out of lengths of wire.
 
 ![alt text](https://dl.dropboxusercontent.com/s/yfhr9g2wc0lo6k3/OutputDriver.png?dl=0s/ous4vje1ny2rs39/OffsetAndScale.png "Output Driver")
 
-Offset and Scale
-----------------
+### Offset and Scale
 
 With the output stage built and working, we next had to interface it to the
 STM32F429 board.  Since the output voltage of the output stage swings +/-12V
@@ -116,8 +112,8 @@ is a circuit which performs the function Vout = m\*Vin + b. Specifically, b is
 m is 8V because we want the output to rise 24V to +12V when the DAC rises to
 3V. We used a Texas Instruments app note to design this circuit around a low
 cost TL072 op-amp and LT1236 10V reference we had available.  After fixing
-a brief pinout issue with TL072, the circuit was functioning as designed and
-we were controlling output voltages from the STM32 DAC. Our offset and scale
+a brief pinout issue with TL072, the circuit was functioning as designed and we
+were controlling output voltages from the STM32 DAC. Our offset and scale
 circuit schematic is shown below.
 
 ![alt text](https://dl.dropboxusercontent.com/s/ous4vje1ny2rs39/OffsetAndScale.png "Offset and Scale Circuit")
@@ -130,38 +126,45 @@ Software
 ========
 
 ### Architecture
-The system is broken into two seperate tasks -- the dacTask and the UI task.  
-The UI task manages the user interface, and the dacTasks manages the DAC set-
-point given a desired set point.  Each tasks are outlined below:
+
+The system is broken into two separate tasks -- the `dacTask` and the `UI` task.
+The `UI` task manages the user interface, and the `dacTasks` manages the DAC set-
+point given a desired set point.  Each of the tasks are outlined below:
 
 ### User Interface
-The user interface (UI) displays the SMU's set point on the STM32F429 Discovery
-board's LCD, and accepts input from both the push button and the touch screen.  The 
-push button zeros the SMU's output, and the touch screen has four vitural buttons,
-allowing the user to increase and decrease the SMU output by 1.0 and 0.1 volts.  
 
-When the user changes the desired output voltage via the touchscreen or a button, 
-the UI task updates the LCD, and then updates the dacTask's set point.  
+The user interface (`UI`) displays the SMU's set point on the STM32F429
+Discovery board's LCD, and accepts input from both the push button and the
+touch screen.  The push button zeros the SMU's output, and the touch screen has
+four virtual buttons, which allows the user to change the output in 1V and 0.1V
+increments.
+
+When the user changes the desired output voltage via the touchscreen or
+a button, the UI task updates the LCD, and then updates the `dacTask`'s set
+point.  
 
 ### DAC Control
-The DAC is controlled by a dedicated task that exposes an atomic variable to allow
-other tasks to set the desired output voltage.  At this point in the development, a
-task is probably more overhead than required, and the system could be better served 
-with a procedure called to set the output voltage.  We decided to keep the DAC 
-controlled by a dedicated task because we plan to have a control loop around the DAC
-with the desired voltage, desired current, measured voltage, and measured current
-as inputs.  Putting this control loop in a dedicated task with the appropriate 
-priority level would allow the system to maintain the required real-time responce to
-interface safely with loads such as battery charging.  
+
+The DAC is controlled by a dedicated task that exposes an atomic variable to
+allow other tasks to set the desired output voltage.  At this point in the
+development, a task is probably more overhead than required, and the system
+could be better served with a procedure called to set the output voltage.  We
+decided to keep the DAC controlled by a dedicated task because we plan to have
+a control loop around the DAC with the desired voltage, desired current,
+measured voltage, and measured current as inputs.  Putting this control loop in
+a dedicated task with the appropriate priority level would allow the system to
+maintain the required real-time response to interface safely with loads such as
+battery charging.  
 
 ### Offset and Scale Correction
-In order to drive the +-12V output, the 0-3V DAC output must be scaled to match the
-characteristics of the offset and scale hardware.  Starting with the approximate
-model of Vout = 8 * dacVoltage - 12, we measured the actual slope and intercept, 
-adjusted our model and achieved excellent correlation between the desired setpoint
-and the measured SMU output voltage.  In the following images show the agreemnt
-between the SMU output voltage set on the Discovery board, and the actual ouput
-voltage measured on the Keithley volt meter.  
+
+In order to drive the +-12V output, the 0-3V DAC output must be scaled to match
+the characteristics of the offset and scale hardware.  Starting with the
+approximate model of Vout = 8 * dacVoltage - 12, we measured the actual slope
+and intercept, adjusted our model and achieved excellent correlation between
+the desired set point and the measured SMU output voltage.  In the following
+images show the agreement between the SMU output voltage set on the Discovery
+board, and the actual output voltage measured on the Keithley volt meter.  
 
 ![alt text](https://dl.dropboxusercontent.com/s/d3q3asdv6h2huk7/tracking1.jpg "Tracking at +1V out")
 
@@ -172,12 +175,14 @@ voltage measured on the Keithley volt meter.
 ![alt text](https://dl.dropboxusercontent.com/s/meez84mgjip9599/tracking5.jpg "Tracking at 6.7V out")
 
 ### Existing Software Improvements
+
 * Encapsulate atomic global variable `setVoltage` with protections and a procedure
 * Incorporate data hiding to make appropriate variables private
-* Add SPARK restrictions on ouput voltage range and UI
-* Refactor UI task code to make flow clearer
+* Add SPARK restrictions on ouput voltage range and `UI`
+* Re-factor `UI` task code to make flow clearer
 
 ### Future Software Work 
+
 * Get ADC working -- measure output voltage and output current
 * Control loop around measured output voltage and current
 * Improve UI
