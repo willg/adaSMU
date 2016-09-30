@@ -29,7 +29,7 @@ package body dacControl is
       DacPercent : Float := 0.0;
 
    begin
-      DacVoltage := (setVoltage + 12.0) / 8.0;
+      DacVoltage := (((setVoltage + 13.82) / 8.455));
       DacPercent := DacVoltage / 3.0;
       return Word (Float'Rounding (DacPercent * Float (Max_Counts)));
    end DacCodeFromVoltage;
