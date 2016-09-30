@@ -172,7 +172,7 @@ voltage measured on the Keithley volt meter.
 
 ![alt text](https://dl.dropboxusercontent.com/s/8euqc11oc43cyru/tracking4.jpg "Tracking at -4.2V out")
 
-![alt text]("https://dl.dropboxusercontent.com/s/meez84mgjip9599/tracking5.jpg "Tracking at 6.7V out")
+![alt text](https://dl.dropboxusercontent.com/s/meez84mgjip9599/tracking5.jpg "Tracking at 6.7V out")
 
 ### Existing Software Improvements
 * Encapsulate atomic global variable setVoltage with protections and a procedure
