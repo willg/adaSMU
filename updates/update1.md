@@ -125,7 +125,7 @@ circuit schematic is shown below.
 
 Pictures of our prototype board are shown below:
 
-![alt text](https://www.dropbox.com/s/x3dkkw9qmwv9692/benchWproto.jpg "Prototype circuit")
+![alt text](https://dl.dropboxusercontent.com/s/x3dkkw9qmwv9692/benchWproto.jpg "Prototype circuit")
 
 Software
 ========
