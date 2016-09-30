@@ -163,6 +163,14 @@ and the measured SMU output voltage.  In the following images show the agreemnt
 between the SMU output voltage set on the Discovery board, and the actual ouput
 voltage measured on the Keithley volt meter.  
 
+![alt text](https://dl.dropboxusercontent.com/s/d3q3asdv6h2huk7/tracking1.jpg "Tracking at +1V out")
+
+![alt text](https://dl.dropboxusercontent.com/s/x5nd3jqgtv0awc0/tracking2.jpg "Tracking at -1V out")
+
+![alt text](https://dl.dropboxusercontent.com/s/8euqc11oc43cyru/tracking4.jpg "Tracking at -4.2V out")
+
+![alt text]("https://dl.dropboxusercontent.com/s/meez84mgjip9599/tracking5.jpg "Tracking at 6.7V out")
+
 ### Existing Software Improvements
 * Encapsulate atomic global variable `setVoltage` with protections and a procedure
 * Incorporate data hiding to make appropriate variables private
@@ -176,7 +184,6 @@ voltage measured on the Keithley volt meter.
 * Implement constant current functional mode
 * Implemnet battery charger functional mode
 * Implement DC load functional mode
-
 
 Accomplishments and Summary
 ===========================
