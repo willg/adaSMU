@@ -62,7 +62,9 @@ control loops.
 
 July-August
 ===========
-
+In July we began experimenting with Ada on the STM32F429 Discovery board by trying 
+all of the different example projects, and then expanding upon the "hello_world_blinky"
+project to read button presses and write to the LCD.  
 
 September
 =========
@@ -130,15 +132,54 @@ Pictures of our prototype board are shown below:
 Software
 ========
 
+### Architecture
+The system is broken into two seperate tasks -- the dacTask and the UI task.  
+The UI task manages the user interface, and the dacTasks manages the DAC set-
+point given a desired set point.  Each tasks are outlined below:
+
+### User Interface
+The user interface (UI) displays the SMU's set point on the STM32F429 Discovery
+board's LCD, and accepts input from both the push button and the touch screen.  The 
+push button zeros the SMU's output, and the touch screen has four vitural buttons,
+allowing the user to increase and decrease the SMU output by 1.0 and 0.1 volts.  
+
+When the user changes the desired output voltage via the touchscreen or a button, 
+the UI task updates the LCD, and then updates the dacTask's set point.  
+
 ### DAC Control
+The DAC is controlled by a dedicated task that exposes an atomic variable to allow
+other tasks to set the desired output voltage.  At this point in the development, a
+task is probably more overhead than required, and the system could be better served 
+with a procedure called to set the output voltage.  We decided to keep the DAC 
+controlled by a dedicated task because we plan to have a control loop around the DAC
+with the desired voltage, desired current, measured voltage, and measured current
+as inputs.  Putting this control loop in a dedicated task with the appropriate 
+priority level would allow the system to maintain the required real-time responce to
+interface safely with loads such as battery charging.  
 
 ### Offset and Scale Correction
+In order to drive the +-12V output, the 0-3V DAC output must be scaled to match the
+characteristics of the offset and scale hardware.  Starting with the approximate
+model of Vout = 8 * dacVoltage - 12, we measured the actual slope and intercept, 
+adjusted our model and achieved excellent correlation between the desired setpoint
+and the measured SMU output voltage.  In the following images show the agreemnt
+between the SMU output voltage set on the Discovery board, and the actual ouput
+voltage measured on the Keithley volt meter.  
 
-### ADC Readings
+### Existing Software Improvements
+* Encapsulate atomic global variable setVoltage with protections and a procedure
+* Incorporate data hiding to make appropriate variables private
+* Add SPARK restrictions on ouput voltage range and UI
+* Refactor UI task code to make flow clearer
 
-### Multitasking
+### Future Software Work 
+* Get ADC working -- measure output voltage and output current
+* Control loop around measured output voltage and current
+* Improve UI
+* Implement constant current functional mode
+* Implemnet battery charger functional mode
+* Implement DC load functional mode
 
-### UI
 
 ![alt text](https://dl.dropboxusercontent.com/s/d3q3asdv6h2huk7/tracking1.jpg "Prototype circuit")
 
