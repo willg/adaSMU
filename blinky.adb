@@ -100,30 +100,24 @@ procedure Blinky is
 begin
    Initialize_LEDs;
    STM32.Button.Initialize;
-   dacInit;
-   LCD_Std_Out.Clear_Screen;
---   LCD_Std_Out.Put ('a');
-   Print (0, 0, 3, "mV");
---   LCD_Std_Out.Put ("Hello, World!  ");
---   LCD_Std_Out.Put ("Press to count");
---   dacControl.dacInit;
+   LCD_Std_Out.Put ("Press to add 1.0 V");
+   Print (0, 24, Word (Float'Rounding (voltage * 1000.0)), "mV");
+
+   dacControl.dacInit;
 
    Toggle (Red);
    Next_Release := Next_Release + Period;
---   dacSetOutput (voltage);
+   setVoltage := voltage;
    delay until Next_Release;
    loop
-
       Toggle (Green);
       if STM32.Button.Has_Been_Pressed then
-         voltage := voltage + 1.0;
-         dacSetOutput (voltage);
+         voltage := voltage + 0.5;
+         setVoltage := voltage;
 
          Toggle (Red);
          count := count + 1;
-         LCD_Std_Out.Clear_Screen;
-         LCD_Std_Out.Put ("Presses:");
-         LCD_Std_Out.Put (count'Image);
+         Print (0, 24, Word (Float'Rounding (voltage * 1000.0)), "mV");
 
 --         LCD_Std_Out.New_Line;
 --         LCD_Std_Out.Put (Value'Image);
