@@ -28,8 +28,7 @@ enables applications, such as measuring diode curves, measuring resistance,
 accurately measuring sleep currents and many more.
 
 
-Early June
-==========
+### Early June
 We began in early June by writing our project proposal.  Next we wrote the high
 level features we thought our project would make our project a useful instrument:
 
@@ -60,14 +59,12 @@ to measure output voltage and current.  Finally, it runs at a clock rate of up
 to 180MHz, affording it the processing power necessary to run two real-time
 control loops.
 
-July-August
-===========
+### July-August
 In July we began experimenting with Ada on the STM32F429 Discovery board by trying 
 all of the different example projects, and then expanding upon the "hello_world_blinky"
 project to read button presses and write to the LCD.  
 
-September
-=========
+### September
 
 September is when progress on the project really began again in earnest. We
 made significant progress on the hardware and built enough software to begin
@@ -167,7 +164,7 @@ between the SMU output voltage set on the Discovery board, and the actual ouput
 voltage measured on the Keithley volt meter.  
 
 ### Existing Software Improvements
-* Encapsulate atomic global variable setVoltage with protections and a procedure
+* Encapsulate atomic global variable `setVoltage` with protections and a procedure
 * Incorporate data hiding to make appropriate variables private
 * Add SPARK restrictions on ouput voltage range and UI
 * Refactor UI task code to make flow clearer
