@@ -60,7 +60,7 @@ with Ada.Real_Time; use Ada.Real_Time;
 with Config; use Config;
 with dacControl; use dacControl;
 
-procedure Blinky is
+procedure UI is
    pragma Priority (MAIN_TASK_PRIORITY);
 
    use type Word;
@@ -185,4 +185,4 @@ exception
          Next_Release := Next_Release + Period;
          delay until Next_Release;
       end loop;
-end Blinky;
+end UI;
