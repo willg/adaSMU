@@ -46,9 +46,11 @@ with Last_Chance_Handler;  pragma Unreferenced (Last_Chance_Handler);
 --  must be somewhere in the closure of the context clauses.
 
 with HAL; use HAL;
+with HAL.Framebuffer;
 with STM32.Device;  use STM32.Device;
 with STM32.Board;   use STM32.Board;
 with STM32.Button;
+with Screen_Interface;
 with LCD_Std_Out;
 
 
@@ -67,6 +69,9 @@ procedure Blinky is
    subtype counts is Integer range 0 .. 10;
    count : counts := 0;
    voltage : OutputVoltage_t := 0.0;
+
+   CurrentTouchState  : Screen_Interface.Touch_State;
+   PreviousTouchState : Screen_Interface.Touch_State;
 
    Next_Release : Time := Clock;
 
@@ -97,9 +102,41 @@ procedure Blinky is
       LCD_Std_Out.Put (X, Y, Value_Image (2 .. Value_Image'Last) & Suffix & "   ");
    end Print;
 
+   function getChangeFromPress (X, Y : Integer) return OutputVoltage_t;
+   function getChangeFromPress (X, Y : Integer) return OutputVoltage_t is
+      changeValue : OutputVoltage_t := 0.0;
+   begin
+      --  right side
+      if (X > 0 and X < 100) then
+         if (Y > 0 and Y < 180) then
+            --  upper, increase 1.0 volts
+            changeValue := 1.0;
+         else
+            --  lower, decrease 1.0 volts
+            changeValue := -1.0;
+         end if;
+      else
+         if (Y > 0 and Y < 180) then
+            --  upper, increase 0.1 volts
+            changeValue := 0.1;
+         else
+            --  lower, decrease 0.1 volts
+            changeValue := -0.1;
+         end if;
+      end if;
+
+      return changeValue;
+   end getChangeFromPress;
+
+
+
 begin
    Initialize_LEDs;
    STM32.Button.Initialize;
+   Touch_Panel.Initialize (HAL.Framebuffer.Portrait);
+   CurrentTouchState := Screen_Interface.Current_Touch_State;
+   PreviousTouchState := CurrentTouchState;
+
    LCD_Std_Out.Put ("Press to add 1.0 V");
    Print (0, 24, Word (Float'Rounding (voltage * 1000.0)), "mV");
 
@@ -111,19 +148,31 @@ begin
    delay until Next_Release;
    loop
       Toggle (Green);
+
+      CurrentTouchState := Screen_Interface.Current_Touch_State;
+      if CurrentTouchState.Touch_Detected /= PreviousTouchState.Touch_Detected then
+         if CurrentTouchState.Touch_Detected then
+            Print (0, 48, Word (CurrentTouchState.X), "x");
+            Print (0, 72, Word (CurrentTouchState.Y), "Y");
+            voltage := voltage + getChangeFromPress (CurrentTouchState.X, CurrentTouchState.Y);
+         end if;
+         PreviousTouchState := CurrentTouchState;
+      end if;
+
       if STM32.Button.Has_Been_Pressed then
          voltage := voltage + 0.5;
-         setVoltage := voltage;
 
          Toggle (Red);
          count := count + 1;
-         Print (0, 24, Word (Float'Rounding (voltage * 1000.0)), "mV");
 
 --         LCD_Std_Out.New_Line;
 --         LCD_Std_Out.Put (Value'Image);
 --         LCD_Std_Out.New_Line;
 --         LCD_Std_Out.Put (Percent'Image);
       end if;
+
+      Print (0, 24, Word (Float'Rounding (voltage * 1000.0)), "mV");
+      setVoltage := voltage;
 
 
       Next_Release := Next_Release + Period;
