@@ -140,6 +140,17 @@ Software
 
 ### UI
 
+![alt text](https://dl.dropboxusercontent.com/s/d3q3asdv6h2huk7/tracking1.jpg "Prototype circuit")
+
+![alt text](https://dl.dropboxusercontent.com/s/x5nd3jqgtv0awc0/tracking2.jpg "Prototype circuit")
+
+![alt text](https://dl.dropboxusercontent.com/s/e7l6dgs7ivaw1a7/tracking3.jpg "Prototype circuit")
+
+![alt text](https://dl.dropboxusercontent.com/s/8euqc11oc43cyru/tracking4.jpg "Prototype circuit")
+
+
+
+
 Accomplishments and Summary
 ===========================
 
