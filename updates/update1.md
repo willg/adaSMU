@@ -74,7 +74,7 @@ made significant progress on the hardware and built enough software to begin
 demonstrating basic functionality of that hardware.
 
 Hardware
---------
+========
 
 Our hardware architecture consists of the following functional blocks:
 1. Output stage
@@ -83,7 +83,8 @@ Our hardware architecture consists of the following functional blocks:
 4. Output current measurement
 
 
-### Output stage
+Output stage
+------------
 
 
 The function of the output stage is to generate the output voltages and
@@ -102,7 +103,10 @@ bench.  Besides the LT3081 and LT3091 IC's, we built it primarily using
 scavanged or scrap parts we had on hand and even made our own low-value ballast
 resistors out of lengths of wire.
 
-### Offset and Scale
+![alt text](https://dl.dropboxusercontent.com/s/yfhr9g2wc0lo6k3/OutputDriver.png?dl=0s/ous4vje1ny2rs39/OffsetAndScale.png "Output Driver")
+
+Offset and Scale
+----------------
 
 With the output stage built and working, we next had to interface it to the
 STM32F429 board.  Since the output voltage of the output stage swings +/-12V
@@ -116,14 +120,17 @@ m is 8V because we want the output to rise 24V to +12V when the DAC rises to
 3V. We used a Texas Instruments app note to design this circuit around a low
 cost TL072 op-amp and LT1236 10V reference we had available.  After fixing
 a brief pinout issue with TL072, the circuit was functioning as designed and
-we were controlling output voltages from the STM32 DAC
+we were controlling output voltages from the STM32 DAC. Our offset and scale
+circuit schematic is shown below.
 
-### Output Voltage Measurement
+![alt text](https://dl.dropboxusercontent.com/s/ous4vje1ny2rs39/OffsetAndScale.png "Offset and Scale Circuit")
 
-### Output Current Measurement
+Pictures of our prototype board are shown below:
+
+![alt text](https://dl.dropboxusercontent.com/s/x3dkkw9qmwv9692/benchWproto.jpg "Prototype circuit")
 
 Software
---------
+========
 
 ### Architecture
 The system is broken into two seperate tasks -- the dacTask and the UI task.  
@@ -174,11 +181,28 @@ voltage measured on the Keithley volt meter.
 * Implement DC load functional mode
 
 
-### image test:
-![alt text](https://dl.dropboxusercontent.com/s/l3obfml9dekdq2h/test.jpg?dl=0 "Logo Title Text 1")
+Accomplishments and Summary
+===========================
 
+Although we did not completely finish our SMU, we did demonstrate some basic
+initial SMU functionality.  We also got our feet wet with Ada and learned a lot
+along the way. Some of our accomplishments were:
 
-<!-- Image Snippit:
-![alt text](https://dl.dropboxusercontent.com/s/l3obfml9dekdq2h/test.jpg?dl=0 "Logo Title Text 1")
--->
+###Open
+* Published our schematics and source code on GitHub:
+[link](https://github.com/willg/adaSMU)
+* Used open source Kicad software to draw our schematics
+
+###Collaborative
+* We wrote this post explaining in detail our work, so that others can learn
+  from it
+
+###Dependable
+* Code is readable and commented
+
+###Inventive
+* We built a driver circuit with full four quadrant operation
+* We interfaced our circuit with Ada software on an ARM Cortex-M
+* We used Ada in the test equipment domain, where to our knowledge it has not
+  been used before
 
